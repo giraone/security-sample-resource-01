@@ -1,0 +1,42 @@
+<server description="WLP Server configured for basic user authentication and SSL">
+
+	<!-- Enable features -->
+	<featureManager>
+		<feature>jsp-2.3</feature>
+		<feature>jndi-1.0</feature>
+		<feature>jaxrs-2.0</feature>
+		<feature>cdi-1.2</feature>
+		<feature>localConnector-1.0</feature>
+		<feature>appSecurity-2.0</feature>
+		<feature>ssl-1.0</feature>
+	    <feature>jsf-2.2</feature>
+    </featureManager>
+
+	<httpEndpoint host="*" httpPort="8080" httpsPort="8443" id="defaultHttpEndpoint">
+	</httpEndpoint>
+
+	<logging/>
+
+	<basicRegistry id="basic" realm="BasicRealm">
+		<user name="admin" password="{xor}PjsyNjE="/>
+		<user name="user01" password="{xor}Kiw6LW9u"/>
+		<user name="user02" password="{xor}Kiw6LW9t"/>
+		<user name="guest" password="guest"/>
+		<group id="Administrators" name="Administrators">
+			<member name="admin"/>
+		</group>
+		<group id="Users" name="Users">
+			<member name="user01"/>
+			<member name="user02"/>
+		</group>
+		<group id="Guests" name="Guests">
+			<member name="guest"/>
+		</group>
+	</basicRegistry>
+
+	<keyStore id="defaultKeyStore" location="${server.config.dir}/resources/security/key.jks" password="{xor}PDc+MTg6Nis=" updateTrigger="disabled"/>
+	<ssl clientAuthentication="false" clientAuthenticationSupported="false" id="mySSLSettings" keyStoreRef="defaultKeyStore" securityLevel="HIGH" serverKeyAlias="default" sslProtocol="TLS"/>
+	<sslDefault sslRef="mySSLSettings"/>
+
+    <applicationMonitor updateTrigger="mbean"/>
+</server>
