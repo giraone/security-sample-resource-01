@@ -1,8 +1,9 @@
-# Kickstart 1 for protected JEE WebSphere Liberty Application #
+# Sample project for protected JEE WebSphere Liberty Application #
 
 This project is indented to show how a simple JEE application can be protected using
 - SSL
 - User authentication (login/password) based on BASIC authentication
+- Authorization based on roles for JAX-RS services
 - Using simple groups for authorization
 
 ## Prerequisites to develop locally and run the project ##
@@ -23,12 +24,12 @@ bin/server create security01
 cp <PATH-TO-GITHUB-PROJECT>/.wlp/server.xml usr/servers/security01
 ```
 
-- Create a key store with "default" entry using ```securityUtility```
+- Create a key store with "default" entry using ```securityUtility``` for your host (replace CN)
 ```
-bin/securityUtility createSSLCertificate --server=defaultServer --password=changeit --subject=CN=ezel8,O=giraone,C=DE
+bin/securityUtility createSSLCertificate --server=defaultServer --password=changeit --subject=CN=yourhost,O=yourorg,C=DE
 ```
 
-- Create a key store with "default" entry using ```keytool```
+- Alternative: Create a key store with "default" entry using ```keytool```
 ```
 cd usr/servers/security01
 mkdir -p resources/security
@@ -53,7 +54,7 @@ cp target/ResourceServer.war <PATH-TO-WLP>/usr/servers/security01/dropins
 - Open HTTPS URL in browser: ```https://<your-machine>:8443/ResourceServer```
 
 ## Run the project on Bluemix ##
-- ...
+- t.b.d.
 
 ## Open issues and TODOs ##
  
