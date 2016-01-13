@@ -9,13 +9,14 @@
 		<feature>localConnector-1.0</feature>
 		<feature>appSecurity-2.0</feature>
 		<feature>ssl-1.0</feature>
-	    <feature>jsf-2.2</feature>
     </featureManager>
 
 	<httpEndpoint host="*" httpPort="8080" httpsPort="8443" id="defaultHttpEndpoint">
 	</httpEndpoint>
 
 	<logging/>
+	
+	<applicationMonitor updateTrigger="mbean"/>
 
 	<basicRegistry id="basic" realm="BasicRealm">
 		<user name="admin" password="{xor}PjsyNjE="/>
@@ -33,10 +34,30 @@
 			<member name="guest"/>
 		</group>
 	</basicRegistry>
-
-	<keyStore id="defaultKeyStore" location="${server.config.dir}/resources/security/key.jks" password="{xor}PDc+MTg6Nis=" updateTrigger="disabled"/>
-	<ssl clientAuthentication="false" clientAuthenticationSupported="false" id="mySSLSettings" keyStoreRef="defaultKeyStore" securityLevel="HIGH" serverKeyAlias="default" sslProtocol="TLS"/>
+	
+	<keyStore id="defaultKeyStore" location="${server.config.dir}/resources/security/key.jks"
+		password="{xor}PDc+MTg6Nis=" updateTrigger="disabled"/>
+	<keyStore id="defaultTrustStore" location="${server.config.dir}/resources/security/trust.jks"
+		password="{xor}PDc+MTg6Nis=" updateTrigger="disabled"/>
+	<ssl clientAuthentication="true" clientAuthenticationSupported="true" id="mySSLSettings" sslProtocol="TLS" 
+		keyStoreRef="defaultKeyStore" trustStoreRef="defaultTrustStore" securityLevel="HIGH"
+		serverKeyAlias="default" clientKeyAlias="datevds01"/>
 	<sslDefault sslRef="mySSLSettings"/>
+	
+	<webAppSecurity allowFailOverToBasicAuth="true" displayAuthenticationRealm="true"/>
 
-    <applicationMonitor updateTrigger="mbean"/>
+	<webApplication id="ResourceServer" name="ResourceServer" contextRoot="ResourceServer" location="ResourceServer.war">
+		<application-bnd>
+			<security-role name="AdministratorRole">
+				<group name="Administrators"></group>
+			</security-role>
+			<security-role name="UserRole">
+				<group name="Users"></group>
+			</security-role>
+			<security-role name="GuestRole">
+				<group name="Guests"></group>
+			</security-role>
+		</application-bnd>
+	</webApplication>
+
 </server>

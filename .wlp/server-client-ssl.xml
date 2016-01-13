@@ -1,0 +1,63 @@
+<server description="WLP Server configured for basic user authentication and SSL">
+
+	<!-- Enable features -->
+	<featureManager>
+		<feature>jsp-2.3</feature>
+		<feature>jndi-1.0</feature>
+		<feature>jaxrs-2.0</feature>
+		<feature>cdi-1.2</feature>
+		<feature>localConnector-1.0</feature>
+		<feature>appSecurity-2.0</feature>
+		<feature>ssl-1.0</feature>
+    </featureManager>
+
+	<httpEndpoint host="*" httpPort="8080" httpsPort="8443" id="defaultHttpEndpoint">
+	</httpEndpoint>
+
+	<logging/>
+	
+	<applicationMonitor updateTrigger="mbean"/>
+
+	<basicRegistry id="basic" realm="BasicRealm">
+		<user name="admin" password="{hash}ATAAAAAIK6COCxt2ZadAAAAAILk+gvmeJ66rs8ZkTSxR5M6skkTYcZfQal4uOoN9NhRx"/>
+		<user name="user01" password="{hash}ATAAAAAIGvYlqTS6/OdAAAAAIKyFWovnXx3LPojNc/LqNu6QyB7U2wINqvovId1rnNVi"/>
+		<user name="user02" password="{hash}ATAAAAAIdOYwWYMfpS5AAAAAIHHEHB8UJ2MNFEO5/wyHqGgJlIEqQniQsQBEZx9kW+uP"/>
+		<user name="guest" password="{hash}ATAAAAAIhPUrhzwk7qFAAAAAIEBLS58EuapWZ6Nq7N7URqOcEB0f3qPtnQlp1zjkHOaJ"/>
+		<user name="CN1" password="xxx"/>
+		<group id="Administrators" name="Administrators">
+			<member name="admin"/>
+		</group>
+		<group id="Users" name="Users">
+			<member name="user01"/>
+			<member name="user02"/>
+			<member name="CN1"/>
+		</group>
+		<group id="Guests" name="Guests">
+			<member name="guest"/>
+		</group>
+	</basicRegistry>
+	
+	<keyStore id="defaultKeyStore" location="${server.config.dir}/resources/security/t530.local.p12" updateTrigger="disabled" type="PKCS12" password="{xor}a2hubg=="/>
+	<keyStore id="defaultTrustStore" location="${server.config.dir}/resources/security/trust.jks" password="{xor}PDc+MTg6Nis=" updateTrigger="disabled"/>
+	<ssl clientAuthentication="true" clientAuthenticationSupported="true"
+		id="mySSLSettings" keyStoreRef="defaultKeyStore" securityLevel="HIGH" serverKeyAlias="tomcat"
+		sslProtocol="TLS" trustStoreRef="defaultTrustStore"/>
+	<sslDefault sslRef="mySSLSettings"/>
+	
+	<webAppSecurity allowFailOverToBasicAuth="true" displayAuthenticationRealm="true"/>
+
+    <webApplication contextRoot="ResourceServer" id="security-sample-resource-01" location="security-sample-resource-01.war" name="security-sample-resource-01">
+		<application-bnd>
+			<security-role name="AdministratorRole">
+				<group name="Administrators"/>
+			</security-role>
+			<security-role name="UserRole">
+				<group name="Users"/>
+			</security-role>
+			<security-role name="GuestRole">
+				<group name="Guests"/>
+			</security-role>
+		</application-bnd>
+	</webApplication>
+
+</server>
