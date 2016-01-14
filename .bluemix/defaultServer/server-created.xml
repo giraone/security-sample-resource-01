@@ -1,0 +1,57 @@
+<server description="WLP Server configured for basic user authentication and SSL">
+    <!-- Enable features -->
+    <featureManager>
+        <feature>jsp-2.3</feature>
+        <feature>jndi-1.0</feature>
+        <feature>jaxrs-2.0</feature>
+        <feature>cdi-1.2</feature>
+        <feature>localConnector-1.0</feature>
+        <feature>appSecurity-2.0</feature>
+        <feature>ssl-1.0</feature>
+        <feature>icap:managementConnector-1.0</feature>
+        <feature>appstate-1.0</feature>
+    </featureManager>
+    <cdi12 enableImplicitBeanArchives="true"/>
+    <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="${port}"/>
+    <webContainer trustHostHeaderPort="true" extractHostHeaderPort="true"/>
+    <logging logDirectory="${application.log.dir}" consoleLogLevel="INFO"/>
+    <httpDispatcher enableWelcomePage="false"/>
+    <applicationMonitor dropinsEnabled="false" updateTrigger="mbean"/>
+    <config updateTrigger="mbean"/>
+    <basicRegistry id="basic" realm="BasicRealm">
+        <user name="admin" password="{hash}ATAAAAAIK6COCxt2ZadAAAAAILk+gvmeJ66rs8ZkTSxR5M6skkTYcZfQal4uOoN9NhRx"/>
+        <user name="user01" password="{hash}ATAAAAAIGvYlqTS6/OdAAAAAIKyFWovnXx3LPojNc/LqNu6QyB7U2wINqvovId1rnNVi"/>
+        <user name="user02" password="{hash}ATAAAAAIdOYwWYMfpS5AAAAAIHHEHB8UJ2MNFEO5/wyHqGgJlIEqQniQsQBEZx9kW+uP"/>
+        <user name="guest" password="{hash}ATAAAAAIhPUrhzwk7qFAAAAAIEBLS58EuapWZ6Nq7N7URqOcEB0f3qPtnQlp1zjkHOaJ"/>
+        <group id="Administrators" name="Administrators">
+            <member name="admin"/>
+        </group>
+        <group id="Users" name="Users">
+            <member name="user01"/>
+            <member name="user02"/>
+        </group>
+        <group id="Guests" name="Guests">
+            <member name="guest"/>
+        </group>
+    </basicRegistry>
+    <keyStore id="defaultKeyStore" location="${server.config.dir}/resources/security/key.jks" password="{xor}PDc+MTg6Nis=" updateTrigger="disabled"/>
+    <keyStore id="defaultTrustStore" location="${server.config.dir}/resources/security/trust.jks" password="{xor}PDc+MTg6Nis=" updateTrigger="disabled"/>
+    <ssl clientAuthentication="false" clientAuthenticationSupported="true" id="mySSLSettings" keyStoreRef="defaultKeyStore" securityLevel="HIGH" serverKeyAlias="default" sslProtocol="TLS" trustStoreRef="defaultTrustStore"/>
+    <sslDefault sslRef="mySSLSettings"/>
+    <webAppSecurity allowFailOverToBasicAuth="true" displayAuthenticationRealm="true"/>
+    <application name="ResourceServer" location="ResourceServer.war" type="war" context-root="/">
+        <application-bnd>
+            <security-role name="AdministratorRole">
+                <group name="Administrators"/>
+            </security-role>
+            <security-role name="UserRole">
+                <group name="Users"/>
+            </security-role>
+            <security-role name="GuestRole">
+                <group name="Guests"/>
+            </security-role>
+        </application-bnd>
+    </application>
+    <include location='runtime-vars.xml'/>
+    <appstate appName='ResourceServer' markerPath='${home}/../.liberty.state'/>
+</server>
